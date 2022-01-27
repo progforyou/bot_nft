@@ -36,7 +36,6 @@ const hasDBUser = (name, discriminator) => {
         if (discriminator.length){
             if (file[key].user === name && file[key].discriminator === discriminator) res = true
         } else {
-            console.log('file[key].user === name', file[key].user === name);
             if (file[key].user === name) res = true;
         }
     })
