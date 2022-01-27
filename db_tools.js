@@ -30,9 +30,23 @@ const writeFile = (file) => {
     });
 }
 
+const hasDBUser = (name, discriminator) => {
+    let res = false;
+    Object.keys(file).map(key => {
+        if (discriminator.length){
+            if (file[key].user === name && file[key].discriminator === discriminator) res = true
+        } else {
+            console.log('file[key].user === name', file[key].user === name);
+            if (file[key].user === name) res = true;
+        }
+    })
+    return res;
+}
+
 module.exports = {
     writeDBUser,
     writeStatusDBUser,
     getDBUser,
-    removeRoleDBUser
+    removeRoleDBUser,
+    hasDBUser
 }

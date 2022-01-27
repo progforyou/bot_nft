@@ -29,7 +29,9 @@ client.on("message", async msg => {
 const check_role = async (user_name, discriminator) => {
     const guild = await client.guilds.fetch(config.SERVER);
     const members = await guild.members.fetch();
-    let user = members.find(e => e.user.username === user_name && e.user.discriminator === discriminator.toString());
+    let user;
+    if (discriminator.length) user = members.find(e => e.user.username === user_name && e.user.discriminator === discriminator.toString());
+    else user = members.find(e => e.user.username === user_name);
     return user.roles.cache.some(e => e.id === config.VERIFY_ROLE);
 }
 
@@ -54,7 +56,8 @@ const remove_role = async (user_name, discriminator) => {
 const check_user = async (user_name, discriminator) => {
     const guild = await client.guilds.fetch(config.SERVER);
     const members = await guild.members.fetch();
-    return members.find(e => e.user.username === user_name && e.user.discriminator === discriminator.toString());
+    if (discriminator.length) return members.find(e => e.user.username === user_name && e.user.discriminator === discriminator.toString());
+    else return members.find(e => e.user.username === user_name);
 }
 
 const send_set_role_msg = async (user_name) => {

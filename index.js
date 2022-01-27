@@ -58,55 +58,32 @@ app.post('/api/user/getUser', async (req, res) => {
     }
 })
 
-/*app.post('/api/user/addUser', async (req, res) => {
-    if (Object.keys(req.body).length) {
-        if (req.body.user) {
-            if (await bot_methods.check_user(req.body.user)) {
-                if (!await bot_methods.check_role(req.body.user)) {
-                    await bot_methods.set_role(req.body.user);
-                    res.status(200).send({});
-                } else {
-                    res.status(400).send({
-                        message: 'User has a role!'
-                    });
-                }
-            } else {
-                res.status(402).send({
-                    message: 'User not in chanel'
-                });
-            }
-        } else {
-            res.status(400).send({
-                message: 'Name is empty'
-            });
-        }
-    } else {
-        res.status(400).send({
-            message: 'Body is empty'
-        });
-    }
-})*/
-
 app.post('/api/user/addRole', async (req, res) => {
     if (Object.keys(req.body).length) {
         if (req.body.user && req.body.principal) {
-            db_tools.writeDBUser(req.body);
-            if (await bot_methods.check_user(req.body.user, req.body.discriminator)) {
-                if (!await bot_methods.check_role(req.body.user, req.body.discriminator)) {
-                    await bot_methods.set_role(req.body.user, req.body.discriminator);
-                    db_tools.writeStatusDBUser(req.body);
-                    res.status(200).send(db_tools.getDBUser(req.body));
+            if (db_tools.hasDBUser(req.body.user, req.body.discriminator)) {
+                res.status(403).send({
+                    message: 'User already registered!'
+                });
+            } else {
+                db_tools.writeDBUser(req.body);
+                if (await bot_methods.check_user(req.body.user, req.body.discriminator)) {
+                    if (!await bot_methods.check_role(req.body.user, req.body.discriminator)) {
+                        await bot_methods.set_role(req.body.user, req.body.discriminator);
+                        db_tools.writeStatusDBUser(req.body);
+                        res.status(200).send(db_tools.getDBUser(req.body));
+                    } else {
+                        db_tools.writeStatusDBUser(req.body);
+                        res.status(400).send({
+                            message: 'User has a role!',
+                            data: db_tools.getDBUser(req.body)
+                        });
+                    }
                 } else {
-                    db_tools.writeStatusDBUser(req.body);
-                    res.status(400).send({
-                        message: 'User has a role!',
-                        data: db_tools.getDBUser(req.body)
+                    res.status(402).send({
+                        message: 'User not in chanel'
                     });
                 }
-            } else {
-                res.status(402).send({
-                    message: 'User not in chanel'
-                });
             }
         } else {
             res.status(405).send({
