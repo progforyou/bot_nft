@@ -1,29 +1,35 @@
 const fs = require('fs');
-const fileName = './users.json';
-let file = require('./users.json');
+let user_db = require('./users.json');
+let addresses_db = require('./addresses.json');
+const user_db_name = "users.json";
+const addresses_db_name = "addresses.json";
+const _ = require('lodash');
 
 
 const getDBUser = (data) => {
-    return file[data.principal]
+    return user_db[data.principal]
 }
 
 const removeRoleDBUser = (data) => {
-    file[data.principal] = {...file[data.principal], status: false};
-    writeFile(file);
+    let user = user_db[data.principal];
+    delete addresses_db[user.addresses];
+    delete user_db[data.principal]; 
+    writeFile(user_db, user_db_name);
 }
 
 
-const writeDBUser = (data) => {
-    file[data.principal] = {user: data.user, discriminator: data.discriminator, status: false};
-    writeFile(file);
+const writeDBs = (data) => {
+    let addresses_db_id = Object.keys(addresses_db).length;
+    user_db[data.principal] = {
+        user: {name: data.user, discriminator: data.discriminator},
+        addresses: addresses_db_id
+    };
+    addresses_db[addresses_db_id] = data.addresses;
+    writeFile(user_db, user_db_name);
+    writeFile(addresses_db, addresses_db_name);
 }
 
-const writeStatusDBUser = (data) => {
-    file[data.principal] = {...file[data.principal], status: true};
-    writeFile(file);
-}
-
-const writeFile = (file) => {
+const writeFile = (file, fileName) => {
     fs.writeFile(fileName, JSON.stringify(file), function writeJSON(err) {
         if (err) return console.log(err);
         console.log(JSON.stringify(file));
@@ -32,19 +38,18 @@ const writeFile = (file) => {
 
 const hasDBUser = (name, discriminator) => {
     let res = false;
-    Object.keys(file).map(key => {
-        if (discriminator.length){
-            if (file[key].user === name && file[key].discriminator === discriminator) res = true
+    _.map(user_db, (value, key) => {
+        if (discriminator.length) {
+            if (value.user.name === name && value.user.discriminator === discriminator) res = true
         } else {
-            if (file[key].user === name) res = true;
+            if (value.user.name === name) res = true;
         }
     })
     return res;
 }
 
 module.exports = {
-    writeDBUser,
-    writeStatusDBUser,
+    writeDBs,
     getDBUser,
     removeRoleDBUser,
     hasDBUser

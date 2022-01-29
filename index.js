@@ -6,8 +6,9 @@ const logger = require('./logger')
 const expressWinston = require('express-winston');
 const port = 8080;
 const db_tools = require('./db_tools');
+const checker = require('./nft_check');
 
-
+checker.init();
 app.use((req, res, next) => {
 
     // Website you wish to allow to connect
@@ -34,51 +35,38 @@ app.get('/', (req, res) => {
 })
 
 app.post('/api/user/getUser', async (req, res) => {
-    if (Object.keys(req.body).length) {
-        let user = db_tools.getDBUser(req.body);
-        if (user) {
-            if (await bot_methods.check_role(user.user, user.discriminator)) {
-                res.status(200).send(db_tools.getDBUser(req.body));
+        if (req.body.principal) {
+            let user_data = db_tools.getDBUser(req.body);
+            if (user_data) {
+                if (await bot_methods.check_role(user_data.user.name, user_data.user.discriminator)) {
+                    res.status(200).send(db_tools.getDBUser(req.body));
+                } else {
+                    db_tools.removeRoleDBUser(req.body);
+                    res.status(400).send({
+                        message: 'Not verify'
+                    });
+                }
             } else {
-                db_tools.removeRoleDBUser(req.body);
                 res.status(400).send({
-                    message: 'Not verify',
-                    data: db_tools.getDBUser(req.body)
+                    message: 'Not verify'
                 });
             }
-        } else {
-            res.status(401).send({
-                message: 'Not in db'
-            });
         }
-    } else {
-        res.status(402).send({
-            message: 'Body is empty'
-        });
     }
-})
+)
 
 app.post('/api/user/addRole', async (req, res) => {
     if (Object.keys(req.body).length) {
-        if (req.body.user && req.body.principal) {
+        if (req.body.user) {
             if (db_tools.hasDBUser(req.body.user, req.body.discriminator)) {
                 res.status(403).send({
                     message: 'User already registered!'
                 });
             } else {
-                db_tools.writeDBUser(req.body);
                 if (await bot_methods.check_user(req.body.user, req.body.discriminator)) {
-                    if (!await bot_methods.check_role(req.body.user, req.body.discriminator)) {
-                        await bot_methods.set_role(req.body.user, req.body.discriminator);
-                        db_tools.writeStatusDBUser(req.body);
-                        res.status(200).send(db_tools.getDBUser(req.body));
-                    } else {
-                        db_tools.writeStatusDBUser(req.body);
-                        res.status(400).send({
-                            message: 'User has a role!',
-                            data: db_tools.getDBUser(req.body)
-                        });
-                    }
+                    await bot_methods.set_role(req.body.user, req.body.discriminator);
+                    db_tools.writeDBs(req.body);
+                    res.status(200).send(db_tools.getDBUser(req.body));
                 } else {
                     res.status(402).send({
                         message: 'User not in chanel'
@@ -98,25 +86,19 @@ app.post('/api/user/addRole', async (req, res) => {
 })
 
 app.post('/api/user/removeRole', async (req, res) => {
-    if (Object.keys(req.body).length) {
-        if (req.body.user) {
-            if (await bot_methods.check_role(req.body.user, req.body.discriminator)) {
-                await bot_methods.remove_role(req.body.user, req.body.discriminator);
-                db_tools.removeRoleDBUser(req.body);
-                res.status(202).send();
-            } else {
-                res.status(402).send({
-                    message: 'User has role'
-                });
-            }
+    if (req.body.user) {
+        if (await bot_methods.check_role(req.body.user, req.body.discriminator)) {
+            await bot_methods.remove_role(req.body.user, req.body.discriminator);
+            db_tools.removeRoleDBUser(req.body);
+            res.status(202).send();
         } else {
-            res.status(400).send({
-                message: 'Name is empty'
+            res.status(402).send({
+                message: 'User has not a role'
             });
         }
     } else {
         res.status(400).send({
-            message: 'Body is empty'
+            message: 'Name is empty'
         });
     }
 })
