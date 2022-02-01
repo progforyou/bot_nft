@@ -9,7 +9,7 @@ const _ = require('lodash');
 const bot_methods = require('./bot');
 const db_tools = require("./db_tools");
 
-const timeOut = 5; //Время в минутах
+const timeOut = 15; //Время в минутах
 
 
 const checkNFT = async (address, collection) => {
@@ -53,7 +53,7 @@ const checkAllUsersNFT = async () => {
 }
 
 const init = () => {
-    setInterval(checkAllUsersNFT, 1 * 10000);
+    setInterval(checkAllUsersNFT, timeOut * 60000);
 }
 
 
