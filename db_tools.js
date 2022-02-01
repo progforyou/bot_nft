@@ -49,9 +49,14 @@ const hasDBUser = (name, discriminator) => {
     return res;
 }
 
+const hasByPrincipalDBUser = (principal) => {
+    return user_db[principal];
+}
+
 module.exports = {
     writeDBs,
     getDBUser,
     removeRoleDBUser,
-    hasDBUser
+    hasDBUser,
+    hasByPrincipalDBUser
 }

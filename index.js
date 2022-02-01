@@ -62,6 +62,10 @@ app.post('/api/user/addRole', async (req, res) => {
                 res.status(403).send({
                     message: 'User already registered!'
                 });
+            } else if (db_tools.hasByPrincipalDBUser(req.body.principal)) {
+                res.status(403).send({
+                    message: `User already registered by ${db_tools.hasByPrincipalDBUser(req.body.principal).user.name}!`
+                });
             } else {
                 if (await bot_methods.check_user(req.body.user, req.body.discriminator)) {
                     await bot_methods.set_role(req.body.user, req.body.discriminator);
