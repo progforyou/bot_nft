@@ -45,16 +45,15 @@ const checkAllUsersNFT = async () => {
                 console.log(data);
             }))
         }))
-        console.log(count);
         if (count === 0){
             await bot_methods.remove_role(value.user.name, value.user.discriminator);
-            db_tools.removeRoleDBUser(key);
+            db_tools.removeRoleDBUser({principal: key});
         }
     }))
 }
 
 const init = () => {
-    setInterval(checkAllUsersNFT, 1 * 60000);
+    setInterval(checkAllUsersNFT, 1 * 10000);
 }
 
 

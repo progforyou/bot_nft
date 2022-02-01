@@ -15,6 +15,7 @@ const removeRoleDBUser = (data) => {
     delete addresses_db[user.addresses];
     delete user_db[data.principal]; 
     writeFile(user_db, user_db_name);
+    writeFile(addresses_db, addresses_db_name);
 }
 
 
