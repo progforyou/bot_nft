@@ -1,6 +1,5 @@
 const Discord = require("discord.js")
-const config = require('dotenv').config().parsed;
-
+const config = require('dotenv').config().parsed || process.env;
 const client = new Discord.Client({intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS", "GUILD_PRESENCES"]})
 
 client.on("ready", async () => {
