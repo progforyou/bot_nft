@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const bot_methods = require('./bot');
 const logger = require('./logger')
 const expressWinston = require('express-winston');
-const port = 8080;
+const port = process.env.PORT || 8080;
 const db_tools = require('./db_tools');
 const checker = require('./nft_check');
 

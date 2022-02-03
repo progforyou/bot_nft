@@ -1,8 +1,9 @@
 const fs = require('fs');
 let user_db = require('./users.json');
 let addresses_db = require('./addresses.json');
-const user_db_name = "users.json";
-const addresses_db_name = "addresses.json";
+const path = require('path');
+const user_db_name = path.resolve(__dirname, "users.json");
+const addresses_db_name = path.resolve(__dirname, "addresses.json");
 const _ = require('lodash');
 
 
