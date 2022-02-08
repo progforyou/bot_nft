@@ -51,6 +51,10 @@ app.post('/api/user/getUser', async (req, res) => {
                     message: 'Not verify'
                 });
             }
+        } else {
+            res.status(402).send({
+                message: 'Unable principal'
+            });
         }
     }
 )
