@@ -72,9 +72,15 @@ app.post('/api/user/addRole', async (req, res) => {
                 });
             } else {
                 if (await bot_methods.check_user(req.body.user, req.body.discriminator)) {
-                    await bot_methods.set_role(req.body.user, req.body.discriminator);
-                    db_tools.writeDBs(req.body);
-                    res.status(200).send(db_tools.getDBUser(req.body));
+                    try {
+                        await bot_methods.set_role(req.body.user, req.body.discriminator);
+                        db_tools.writeDBs(req.body);
+                        res.status(200).send(db_tools.getDBUser(req.body));
+                    } catch (e) {
+                        res.status(402).send({
+                            message: 'Missing permission!'
+                        });
+                    }
                 } else {
                     res.status(402).send({
                         message: 'User not in chanel'
