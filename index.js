@@ -77,6 +77,8 @@ app.post('/api/user/addRole', async (req, res) => {
                         db_tools.writeDBs(req.body);
                         res.status(200).send(db_tools.getDBUser(req.body));
                     } catch (e) {
+                        /*console.log(e);*/
+                        logger.error(e);
                         res.status(402).send({
                             message: 'Missing permission!'
                         });
