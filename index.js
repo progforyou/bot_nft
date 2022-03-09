@@ -8,14 +8,17 @@ const port = process.env.PORT || 8080;
 const db_tools = require('./db_tools');
 const checker = require('./nft_check');
 const cors = require('cors')
+const ipfilter = require('express-ipfilter').IpFilter
 
 checker.init();
 
+const ips = ['185.18.52.85'];
 const corsOptions = {
   origin: 'https://icpets.xyz/',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+app.use(ipfilter(ips, {mode: 'allow'}));
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
