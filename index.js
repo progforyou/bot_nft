@@ -8,7 +8,6 @@ const port = process.env.PORT || 8080;
 const db_tools = require('./db_tools');
 const checker = require('./nft_check');
 const cors = require('cors')
-const ipfilter = require('express-ipfilter').IpFilter
 
 checker.init();
 
@@ -17,13 +16,13 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-app.use(ipfilter(ips, {mode: 'allow'}));
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    console.log(req.get('origin'));
+    console.log('origin', req.get('origin'));
+    console.log('hostname', req.hostname)
 })
 
 app.get('/', (req, res) => {
