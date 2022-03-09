@@ -20,11 +20,6 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-    console.log('origin', req.get('origin'));
-    console.log('hostname', req.hostname)
-})
-
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
