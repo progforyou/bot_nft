@@ -18,6 +18,8 @@
     "password": "57k21x174",
     "database": "ntf_bot",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "operatorsAliases": false,
+    "use_env_variable": "DATABASE_URL"
   }
 }
