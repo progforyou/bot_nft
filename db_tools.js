@@ -5,53 +5,62 @@ const path = require('path');
 const user_db_name = path.resolve(__dirname, "users.json");
 const addresses_db_name = path.resolve(__dirname, "addresses.json");
 const _ = require('lodash');
+const db = require('./models/index.js');
 
-
-const getDBUser = (data) => {
-    return user_db[data.principal]
+/*db.Users.create({ name: "batthyaniy", discriminator: "0239", principal: "or7v4-foyui-md4el-nup5g-gnboi-vz6ct-dwzrj-3irhi-rw6fm-m5d7v-7qe" });*/
+const getDBUser = async (data) => {
+    console.log(await db.Users.findAll());
+    console.log(await db.Addresses.findAll());
+    let row = await db.Users.findOne({where: {principal: data.principal}});
+    if (row) return row.dataValues;
 }
+/*db.Addresses.create({userId: 1, address: "addressqweqweqwe"})*/
+/*return db.User.findAll();*/
 
-const removeRoleDBUser = (data) => {
-    let user = user_db[data.principal];
-    delete addresses_db[user.addresses];
-    delete user_db[data.principal]; 
-    writeFile(user_db, user_db_name);
-    writeFile(addresses_db, addresses_db_name);
-}
-
-
-const writeDBs = (data) => {
-    let addresses_db_id = Object.keys(addresses_db).length;
-    user_db[data.principal] = {
-        user: {name: data.user, discriminator: data.discriminator},
-        addresses: addresses_db_id
-    };
-    addresses_db[addresses_db_id] = data.addresses;
-    writeFile(user_db, user_db_name);
-    writeFile(addresses_db, addresses_db_name);
-}
-
-const writeFile = (file, fileName) => {
-    fs.writeFile(fileName, JSON.stringify(file), function writeJSON(err) {
-        if (err) return console.log(err);
-        console.log(JSON.stringify(file));
-    });
-}
-
-const hasDBUser = (name, discriminator) => {
-    let res = false;
-    _.map(user_db, (value, key) => {
-        if (discriminator.length) {
-            if (value.user.name === name && value.user.discriminator === discriminator) res = true
-        } else {
-            if (value.user.name === name) res = true;
+const removeRoleDBUser = async (data) => {
+    let user = await getDBUser(data);
+    await db.Users.destroy({
+        where: {
+            principal: data.principal
         }
-    })
-    return res;
+    });
+    await db.Addresses.destroy({
+        where: {
+            userId: user.id
+        }
+    });
+
 }
 
-const hasByPrincipalDBUser = (principal) => {
-    return user_db[principal];
+
+const writeDBs = async (data) => {
+    await db.Users.create({name: data.user, discriminator: data.discriminator, principal: data.principal});
+    let user = await getDBUser(data);
+    data.addresses.map(e => {
+        db.Addresses.create({address: e, userId: user.id});
+    })
+}
+
+const hasDBUser = async (name, discriminator) => {
+    let row;
+    if (discriminator.length) {
+        row = await db.Users.findOne({where: {name: name, discriminator: discriminator}});
+    } else {
+        row = await db.Users.findOne({where: {name: name}});
+    }
+    return !!row;
+}
+
+const getAllUsers = async () => {
+    return await db.Users.findAll();
+}
+
+const getAddressesByUser = async (id) => {
+    return await db.Addresses.findAll({
+        where: {
+            userId: id
+        }
+    });
 }
 
 module.exports = {
@@ -59,5 +68,6 @@ module.exports = {
     getDBUser,
     removeRoleDBUser,
     hasDBUser,
-    hasByPrincipalDBUser
+    getAllUsers,
+    getAddressesByUser
 }

@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "nikolay",
+    "password": "57k21x174",
+    "database": "ntf_bot",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "nikolay",
+    "password": "57k21x174",
+    "database": "ntf_bot",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "nikolay",
+    "password": "57k21x174",
+    "database": "ntf_bot",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}

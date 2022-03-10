@@ -3,8 +3,6 @@ const idlFactory = require('./Factories/ext.did');
 const {HttpAgent, Actor} = require("@dfinity/agent");
 const collections = require('./collections.json').collections;
 
-const addresses_db = require('./addresses.json');
-const user_db = require('./users.json');
 const _ = require('lodash');
 const bot_methods = require('./bot');
 const db_tools = require("./db_tools");
@@ -33,12 +31,13 @@ const createActor = (agent, collection) => {
 }
 
 const checkAllUsersNFT = async () => {
-    await Promise.all(_.map(user_db, async (value, key) => {
+    let users = await db_tools.getAllUsers();
+    await Promise.all(_.map(users, async value => {
         let count = 0;
-        let addresses = addresses_db[value.addresses];
+        let addresses = await db_tools.getAddressesByUser(value.dataValues.id);
         await Promise.all(addresses.map(async (address) => {
             return await Promise.all(collections.map(async token => {
-                let data = await checkNFT(address, token);
+                let data = await checkNFT(address.dataValues.address, token);
                 if (data.ok){
                     count += data.ok.length;
                 }
@@ -46,8 +45,8 @@ const checkAllUsersNFT = async () => {
             }))
         }))
         if (count === 0){
-            await bot_methods.remove_role(value.user.name, value.user.discriminator);
-            db_tools.removeRoleDBUser({principal: key});
+            await bot_methods.remove_role(value.dataValues.name, value.dataValues.discriminator);
+            await db_tools.removeRoleDBUser({principal: value.dataValues.principal});
         }
     }))
 }
