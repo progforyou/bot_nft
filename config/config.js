@@ -1,4 +1,5 @@
 const fs = require('fs');
+const config = require('dotenv').config().parsed || process.env;
 
 module.exports = {
     "development": {
@@ -16,8 +17,8 @@ module.exports = {
         "dialect": "postgres"
     },
     "production": {
-        "url": process.env.DATABASE_URL,
-        "use_env_variable": process.env.DATABASE_URL,
+        "url": config.DATABASE_URL,
+        "use_env_variable": config.DATABASE_URL,
         dialectOptions: {
             ssl: {
                 require: true,
