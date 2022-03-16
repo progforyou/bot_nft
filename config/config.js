@@ -1,6 +1,7 @@
 const fs = require('fs');
 const config = require('dotenv').config().parsed || process.env;
 
+console.log(config.DATABASE_URL)
 module.exports = {
     "development": {
         "username": "nikolay",
