@@ -14,12 +14,13 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "nikolay",
-    "password": "57k21x174",
-    "database": "ntf_bot",
-    "host": "localhost",
+    "username": "xyzclgezunwhtt",
+    "password": "b4abc4eeeffcc392c9586dad861fb46ba197bf94cf7f13b6de4ba373d3cce60e",
+    "database": "d56u8mvuqh4dg2",
+    "host": "ec2-52-208-221-89.eu-west-1.compute.amazonaws.com",
+    "port": "5432",
     "dialect": "postgres",
     "operatorsAliases": false,
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "postgres://xyzclgezunwhtt:b4abc4eeeffcc392c9586dad861fb46ba197bf94cf7f13b6de4ba373d3cce60e@ec2-52-208-221-89.eu-west-1.compute.amazonaws.com:5432/d56u8mvuqh4dg2"
   }
 }
