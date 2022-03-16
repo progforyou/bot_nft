@@ -12,8 +12,9 @@ const Pool = require("pg").Pool;
 
 checker.init();
 
-const corsOptions = {
-    origin: 'https://icpets.xyz',
+const corsOptions = {/*
+    origin: 'https://icpets.xyz',*/
+    origin: 'qwe',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
